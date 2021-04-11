@@ -1,7 +1,10 @@
-# cmake_minimum_required(VERSION <specify CMake version here>)
-project(clion_proj)
+cmake_minimum_required(VERSION 3.5)
+project(algprogram)
 
 set(CMAKE_CXX_STANDARD 11)
-add_executable(clion_proj main.cpp gtestcase.cpp)
 
-target_link_libraries(clion_proj -lgtestd -lgtest_maind -lpthread)
+file(GLOB SRC ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+
+add_executable(algprogram ${SRC} sortAlgTest.cpp)
+
+target_link_libraries(algprogram libgtestd.a)
