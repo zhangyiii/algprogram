@@ -93,3 +93,109 @@ TEST(LeetCodeTest, binary_search_case){
     auto result = search(array, target);
     std::cout << result << std::endl;
 }
+
+std::vector<int> searchRange_1(std::vector<int>& nums, int target) {
+    int findPos;
+    int left = 0;
+    int right = nums.size() -1;
+    while(left < right){
+        int mid = left + (right - left)/2;
+        if(nums[mid] < target){
+            left = mid + 1;
+        }else if(nums[mid] > target){
+            right = mid - 1;
+        }else{
+            findPos = mid;
+            break;
+        }
+    }
+    if(left < right){
+        int start, end;
+        start = end = findPos;
+        while(start-1 >= 0 && nums[start-1] == target){
+            start--;
+        }
+        while(end+1 < nums.size() && nums[end+1] == target){
+            end++;
+        }
+        return std::vector<int>{start, end};
+    }else if(left == right){
+        if(nums[left] == target){
+            return std::vector<int>{left, left};
+        }else{
+            return std::vector<int>{-1, -1};
+        }
+    }else{
+        return std::vector<int>{-1, -1};
+    }
+}
+TEST(LeetCodeTest, binary_search_case_1){
+    std::vector<int> array = {2,2};
+    int target = 2;
+    auto result = searchRange_1(array, target);
+    std::cout << result[0] << ", " << result[1] << std::endl;
+}
+
+
+std::vector<int> maxSubsequnceSum(const std::vector<int> &nums, int &maxSum){
+    int startIndex, endIndex;
+    int sumTemp = 0;
+    startIndex = 0; /// 初始时，startIndex总是0
+    for(int i = 0; i < nums.size(); ++i){
+        sumTemp += nums[i];
+        if(sumTemp > maxSum){
+            maxSum = sumTemp;
+            endIndex = i;
+        }else if(sumTemp < 0){ /// 如果为负数，直接将sumTemp赋值为0，因为如果带上前面的负数值只会更小，贪心策略
+            sumTemp = 0;
+            startIndex = i + 1;
+        }
+    }
+    return std::vector<int>{startIndex, endIndex};
+}
+TEST(LeetCodeTest, max_subsequnce_sum_case){
+    std::vector<int> nums = {-2, 11, -4, 13, -5, -2};
+    int maxSum = 0;
+    auto result = maxSubsequnceSum(nums, maxSum);
+    std::cout << "maxSum = " << maxSum << ", startIndex = " << result[0] << ", endIndex = " << result[1] << std::endl;
+}
+
+int gcd(int &M, int &N){
+    if(M < N){ /// 交换M和N，保证 M >= N
+        int temp = M;
+        M = N;
+        N = temp;
+    }
+    int rem;
+    while(N > 0){
+      rem = M % N; /// 计算余数
+      M = N;
+      N = rem;
+    }
+    return M;
+}
+TEST(LeetCodeTest, gcd_case){
+    int M, N;
+    M = 50;
+    N = 15;
+    std::cout << gcd(M, N) << std::endl;
+}
+
+long long pow_compute(long int X, int N){
+    if(N == 0){ /// 一般情况
+        return 1;
+    }else if(N == 1){
+        return X;
+    }
+
+    if(N % 2 != 0){ /// 如果N为奇数
+        return pow_compute((X * X), N / 2) * X;
+    }else{
+        return pow_compute((X * X), N / 2);
+    }
+}
+TEST(LeetCodeTest, pow_case){
+    long int X = 2;
+    int N = 31;
+    std::cout << pow_compute(X, N) << std::endl;
+}
