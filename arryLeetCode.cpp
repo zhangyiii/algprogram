@@ -6,6 +6,7 @@
 #include <string>
 #include <map>
 #include <gtest/gtest.h>
+using namespace std;
 
 std::vector<int> findIndex(const std::vector<int>& nums, const int &target){
     std::map<int, int> mp;
@@ -155,7 +156,7 @@ std::vector<int> maxSubsequnceSum(const std::vector<int> &nums, int &maxSum){
 }
 TEST(LeetCodeTest, max_subsequnce_sum_case){
     std::vector<int> nums = {-2, 11, -4, 13, -5, -2};
-    int maxSum = 0;
+    int maxSum = INT_MIN;
     auto result = maxSubsequnceSum(nums, maxSum);
     std::cout << "maxSum = " << maxSum << ", startIndex = " << result[0] << ", endIndex = " << result[1] << std::endl;
 }
@@ -198,4 +199,53 @@ TEST(LeetCodeTest, pow_case){
     long int X = 2;
     int N = 31;
     std::cout << pow_compute(X, N) << std::endl;
+}
+
+// 贪心
+int maxSubArray_greedy(std::vector<int> &nums){
+    int maxSum = INT_MIN;
+    int tempSum = 0;
+    for(int i = 0; i < nums.size(); ++i){
+        tempSum += nums[i];
+        maxSum = std::max(tempSum, maxSum);
+        if(tempSum < 0){
+            tempSum = 0;
+        }
+    }
+    return maxSum;
+}
+// 分治
+int divide(std::vector<int>& nums, int left, int right){
+    if(left == right){
+        return nums[left];
+    }
+    int middle = left + (right - left) / 2;
+    auto leftMaxSum = divide(nums, left, middle);
+    auto rightMaxSum = divide(nums, (middle+1), right);
+
+    int midLeftMaxSum = INT_MIN;
+    int tempSum = 0;
+    for(int i = middle; i >= left; i--){
+        tempSum += nums[i];
+        midLeftMaxSum = std::max(tempSum, midLeftMaxSum);
+    }
+    int midRightMaxSum = INT_MIN;
+    tempSum = 0;
+    for(int i = middle + 1; i <= right; i++){
+        tempSum += nums[i];
+        midRightMaxSum = std::max(tempSum, midRightMaxSum);
+    }
+
+    return std::max(std::max(leftMaxSum, rightMaxSum), (midLeftMaxSum + midRightMaxSum));
+}
+int maxSubArray_divide(std::vector<int> &nums){
+    return divide(nums, 0, nums.size()-1);
+}
+
+TEST(LeetCodeTest, maxsuqencesum){
+    std::vector<int> nums{-2,1,-3,4,-1,2,1,-5,4};
+    auto ans0 = maxSubArray_greedy(nums);
+    std::cout << "ans = " << ans0 << std::endl;
+    auto ans1 = maxSubArray_divide(nums);
+    std::cout << "ans = " << ans1 << std::endl;
 }
